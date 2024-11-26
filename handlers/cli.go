@@ -5,16 +5,18 @@ import (
 	"fmt"
 	"io"
 	"strconv"
-
-	"github.com/mdw-smarty/calc-lib2"
 )
 
+type Calculator interface {
+	Calculate(a, b int) int
+}
+
 type CLIHandler struct {
-	calculator *calc.Addition
+	calculator Calculator
 	stdout     io.Writer
 }
 
-func NewCLIHandler(calculator *calc.Addition, stdout io.Writer) *CLIHandler {
+func NewCLIHandler(calculator Calculator, stdout io.Writer) *CLIHandler {
 	return &CLIHandler{
 		calculator: calculator,
 		stdout:     stdout,

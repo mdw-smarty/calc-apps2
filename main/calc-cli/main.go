@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
 
@@ -9,10 +10,23 @@ import (
 )
 
 func main() {
-	calculator := &calc.Addition{}
+	var operation string
+	flag.StringVar(&operation, "op", "+", "The operation to use.")
+	flag.Parse()
+	calculator, ok := calculators[operation]
+	if !ok {
+		log.Fatalf("Unknown operation %s.", operation)
+	}
 	handler := handlers.NewCLIHandler(calculator, os.Stdout)
-	err := handler.Handle(os.Args[1:])
+	err := handler.Handle(flag.Args())
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+var calculators = map[string]handlers.Calculator{
+	"+": &calc.Addition{},
+	"-": &calc.Subtraction{},
+	"*": &calc.Multiplication{},
+	"/": &calc.Division{},
 }
