@@ -3,13 +3,14 @@ package handlers
 import (
 	"encoding/csv"
 	"io"
+	"log"
 	"strconv"
 )
 
 type CSVHandler struct {
 	stdin       *csv.Reader
 	stdout      *csv.Writer
-	stderr      io.Writer
+	stderr      *log.Logger
 	calculators map[string]Calculator
 }
 
@@ -17,7 +18,7 @@ func NewCSVHandler(stdin io.Reader, stdout, stderr io.Writer, calculators map[st
 	return &CSVHandler{
 		stdin:       csv.NewReader(stdin),
 		stdout:      csv.NewWriter(stdout),
-		stderr:      stderr,
+		stderr:      log.New(stderr, "csv: ", log.LstdFlags),
 		calculators: calculators,
 	}
 }
@@ -30,7 +31,6 @@ func (this *CSVHandler) Handle() error {
 			break
 		}
 		if err != nil {
-			// TODO
 		}
 		a, _ := strconv.Atoi(record[0])
 		calculator := this.calculators[record[1]]
