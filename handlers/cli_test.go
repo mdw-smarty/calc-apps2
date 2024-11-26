@@ -12,7 +12,7 @@ import (
 func assertEqual(t *testing.T, actual, expected string) {
 	t.Helper()
 	if actual != expected {
-		t.Errorf("got: %s, want: %s", actual, expected)
+		t.Errorf("got: [%s], want: [%s]", actual, expected)
 	}
 }
 func assertError(t *testing.T, err, expected error) {
