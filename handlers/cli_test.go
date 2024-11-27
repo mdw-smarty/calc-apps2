@@ -9,18 +9,6 @@ import (
 	"github.com/mdw-smarty/calc-lib2"
 )
 
-func assertEqual(t *testing.T, actual, expected string) {
-	t.Helper()
-	if actual != expected {
-		t.Errorf("got: [%s], want: [%s]", actual, expected)
-	}
-}
-func assertError(t *testing.T, err, expected error) {
-	if !errors.Is(err, expected) {
-		t.Errorf("expected err to wrap %v, but it didn't", expected)
-	}
-}
-
 func TestHandler_NotEnoughArgs(t *testing.T) {
 	handler := NewCLIHandler(nil, nil)
 	err := handler.Handle(nil)
@@ -52,12 +40,4 @@ func TestHandler_WriterError(t *testing.T) {
 	err := handler.Handle([]string{"1", "2"})
 	assertError(t, err, boink)
 	assertError(t, err, errWriter)
-}
-
-type ErringWriter struct {
-	err error
-}
-
-func (this *ErringWriter) Write(p []byte) (n int, err error) {
-	return 0, this.err
 }

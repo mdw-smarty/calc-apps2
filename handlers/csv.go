@@ -31,13 +31,31 @@ func (this *CSVHandler) Handle() error {
 			break
 		}
 		if err != nil {
+			this.stderr.Println("Reader err:", err)
+			return err
 		}
-		a, _ := strconv.Atoi(record[0])
-		calculator := this.calculators[record[1]]
-		b, _ := strconv.Atoi(record[2])
+		a, err := strconv.Atoi(record[0])
+		if err != nil {
+			this.stderr.Printf("Invalid operand: [%s] (err: %v)", record[0], err)
+			continue
+		}
+		calculator, ok := this.calculators[record[1]]
+		if !ok {
+			this.stderr.Printf("Unsupported operation: [%s]", record[1])
+			continue
+		}
+		b, err := strconv.Atoi(record[2])
+		if err != nil {
+			this.stderr.Printf("Invalid operand: [%s] (err: %v)", record[2], err)
+			continue
+		}
 		c := calculator.Calculate(a, b)
-		_ = this.stdout.Write(append(record, strconv.Itoa(c)))
+		err = this.stdout.Write(append(record, strconv.Itoa(c)))
+		if err != nil {
+			this.stderr.Printf("Write err: %v", err)
+			return err
+		}
 	}
 	this.stdout.Flush()
-	return nil
+	return this.stdout.Error()
 }
