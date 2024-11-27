@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"reflect"
 	"testing"
 )
 
@@ -9,10 +10,10 @@ var boink = errors.New("boink")
 
 /////////////////////////////////////////////////////
 
-func assertEqual(t *testing.T, actual, expected string) {
+func assertEqual(t *testing.T, actual, expected any) {
 	t.Helper()
-	if actual != expected {
-		t.Errorf("got:\n%s\n\nwant:\n%s", actual, expected)
+	if !reflect.DeepEqual(actual, expected) {
+		t.Errorf("got:\n%v\n\nwant:\n%v", actual, expected)
 	}
 }
 func assertError(t *testing.T, err, expected error) {
