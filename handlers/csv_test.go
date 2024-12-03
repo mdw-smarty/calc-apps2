@@ -30,16 +30,12 @@ var csvCalculators = map[string]Calculator{"+": &calc.Addition{}}
 
 func (this *CSVHandlerFixture) TestCSVHandler() {
 	var output bytes.Buffer
-	var logs bytes.Buffer
-	handler := NewCSVHandler(strings.NewReader(rawInput), &output, &logs, csvCalculators)
+	handler := NewCSVHandler(strings.NewReader(rawInput), &output, this, csvCalculators)
 
 	err := handler.Handle()
 
 	this.So(err, should.BeNil)
 	this.So(output.String(), should.Equal, "1,+,2,3\n2,+,3,5\n")
-	if logs.Len() > 0 {
-		this.Printf("\n%s", logs.String())
-	}
 }
 func TestCSVHandler_ReaderError(t *testing.T) {
 	reader := &ErringReader{err: boink}
