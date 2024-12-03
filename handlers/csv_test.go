@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/mdw-smarty/calc-lib2"
+	"github.com/smarty/assertions/should"
+	"github.com/smarty/gunit"
 )
 
 var rawInput = strings.Join([]string{
@@ -16,19 +18,27 @@ var rawInput = strings.Join([]string{
 	`2,+,3`,
 }, "\n")
 
+func TestCSVHandler(t *testing.T) {
+	gunit.Run(new(CSVHandlerFixture), t)
+}
+
+type CSVHandlerFixture struct {
+	*gunit.Fixture
+}
+
 var csvCalculators = map[string]Calculator{"+": &calc.Addition{}}
 
-func TestCSVHandler(t *testing.T) {
+func (this *CSVHandlerFixture) TestCSVHandler() {
 	var output bytes.Buffer
 	var logs bytes.Buffer
 	handler := NewCSVHandler(strings.NewReader(rawInput), &output, &logs, csvCalculators)
 
 	err := handler.Handle()
 
-	assertError(t, err, nil)
-	assertEqual(t, output.String(), "1,+,2,3\n2,+,3,5\n")
+	this.So(err, should.BeNil)
+	this.So(output.String(), should.Equal, "1,+,2,3\n2,+,3,5\n")
 	if logs.Len() > 0 {
-		t.Logf("\n%s", logs.String())
+		this.Printf("\n%s", logs.String())
 	}
 }
 func TestCSVHandler_ReaderError(t *testing.T) {
